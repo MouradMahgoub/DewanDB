@@ -26,6 +26,7 @@ import edu.berkeley.cs186.database.recovery.ARIESRecoveryManager;
 import edu.berkeley.cs186.database.recovery.DummyRecoveryManager;
 import edu.berkeley.cs186.database.recovery.RecoveryManager;
 import edu.berkeley.cs186.database.table.*;
+import edu.berkeley.cs186.database.table.Record;
 import edu.berkeley.cs186.database.table.stats.TableStats;
 
 import java.io.*;
@@ -394,7 +395,7 @@ public class Database implements AutoCloseable {
         }
     }
 
-    // Trims and lowercases table and column names so that lookups are
+    // Trims and lowercases table and column names so that lookups are 
     // case-insensitive and format-insensitive
     private String normalize(String name) {
         return name.trim().toLowerCase();
@@ -975,7 +976,7 @@ public class Database implements AutoCloseable {
         }
     }
 
-    private class TransactionImpl extends Transaction {
+    private class TransactionImpl extends Transaction { 
         private long transNum;
         private boolean recoveryTransaction;
         private TransactionContext transactionContext;
