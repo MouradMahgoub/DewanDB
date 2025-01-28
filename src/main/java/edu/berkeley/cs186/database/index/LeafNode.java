@@ -181,8 +181,12 @@ class LeafNode extends BPlusNode {
         }
 
         if(data.hasNext()){
-          LeafNode newSibling = new LeafNode(metadata, bufferManager, new ArrayList<DataBox>(), new ArrayList<RecordId>(), Optional.empty(), treeContext);
           Pair<DataBox, RecordId> siblingRecord = data.next();
+          List<DataBox> siblingKeys = new ArrayList<DataBox>();
+          List<RecordId> siblingRids = new ArrayList<RecordId>();
+          siblingKeys.add(siblingRecord.getFirst());
+          siblingRids.add(siblingRecord.getSecond());
+          LeafNode newSibling = new LeafNode(metadata, bufferManager, siblingKeys, siblingRids, Optional.empty(), treeContext);
           newSibling.put(siblingRecord.getFirst(), siblingRecord.getSecond());
           this.rightSibling = Optional.of(newSibling.getPage().getPageNum());
           sync();
