@@ -139,8 +139,45 @@ class InnerNode extends BPlusNode {
     @Override
     public Optional<Pair<DataBox, Long>> bulkLoad(Iterator<Pair<DataBox, RecordId>> data,
             float fillFactor) {
-        // TODO(proj2): implement
+        // keep adding till split or finished
+        while ( keys.size() < 2 * metadata.getOrder() && data.hasNext()) {
+          BPlusNode lastChild = getChild(getChildren().size() - 1);
+          Optional<Pair<DataBox, Long>> newChild = lastChild.bulkLoad(data, fillFactor);
+          if(newChild.equals(Optional.empty())) break; // No more data to be added
+          
+          keys.add(newChild.get().getFirst());
+          children.add(newChild.get().getSecond());
+        }
+        // Handle case of bulk loading last possible child
+        if(data.hasNext()){
+          BPlusNode lastChild = getChild(getChildren().size() - 1);
+          Optional<Pair<DataBox, Long>> newChild = lastChild.bulkLoad(data, fillFactor);
+          if(!newChild.equals(Optional.empty())){
+            // need to split with d in both and middle pushed up
+            DataBox parentKey = keys.get(metadata.getOrder());
+            List<DataBox> siblingKeys = new ArrayList<DataBox>();
+            List<Long> siblingChildren = new ArrayList<Long>();
+            
+            // move keys to new sibling
+            for (int i = metadata.getOrder()+1; i < keys.size(); ++i) {
+              siblingKeys.add(keys.get(i));
+              siblingChildren.add(children.get(i));
+            }
+            siblingChildren.add(children.get(children.size() - 1));
 
+            InnerNode sibling =  new InnerNode(metadata, bufferManager, siblingKeys, siblingChildren, treeContext);
+
+            // remove keys from current node
+            for (int i = metadata.getOrder(); i < keys.size(); ++i) {
+              keys.remove(i);
+              children.remove(i+1);
+            }
+
+            sync();
+            return Optional.of(new Pair<DataBox, Long> (parentKey, sibling.getPage().getPageNum()));
+          }
+        }
+        sync();
         return Optional.empty();
     }
 
