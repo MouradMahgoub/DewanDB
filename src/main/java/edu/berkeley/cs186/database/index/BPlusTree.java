@@ -204,7 +204,7 @@ public class BPlusTree {
         Iterator<RecordId> recordIterator = iteratorNode.scanAll();
 
 
-        return new BPlusTreeIterator(this, iteratorNode, recordIterator);
+        return new BPlusTreeIterator(iteratorNode, recordIterator);
     }
 
     /**
@@ -239,7 +239,7 @@ public class BPlusTree {
         LeafNode iteratorNode = root.get(key);
         Iterator<RecordId> recordIterator = iteratorNode.scanGreaterEqual(key);
 
-        return new BPlusTreeIterator(this, iteratorNode, recordIterator);
+        return new BPlusTreeIterator(iteratorNode, recordIterator);
     }
 
     /**
@@ -459,7 +459,6 @@ public class BPlusTree {
     // Iterator ////////////////////////////////////////////////////////////////
     private class BPlusTreeIterator implements Iterator<RecordId> {
         // TODO(proj2): Add whatever fields and constructors you want here.
-        BPlusTreeIterator(BPlusTree tree, LeafNode leafNode, Iterator<RecordId> recordIterator) {}    
 
         LeafNode leafNode;
         Iterator<RecordId> iterator;
