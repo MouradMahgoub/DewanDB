@@ -200,9 +200,11 @@ public class BPlusTree {
         // TODO(proj4_integration): Update the following line
         LockUtil.ensureSufficientLockHeld(lockContext, LockType.NL);
 
-        // TODO(proj2): Return a BPlusTreeIterator.
+        LeafNode iteratorNode = root.getLeftmostLeaf();
+        Iterator<RecordId> recordIterator = iteratorNode.scanAll();
 
-        return Collections.emptyIterator();
+
+        return new BPlusTreeIterator(this, iteratorNode, recordIterator);
     }
 
     /**
@@ -234,8 +236,10 @@ public class BPlusTree {
         LockUtil.ensureSufficientLockHeld(lockContext, LockType.NL);
 
         // TODO(proj2): Return a BPlusTreeIterator.
+        LeafNode iteratorNode = root.get(key);
+        Iterator<RecordId> recordIterator = iteratorNode.scanGreaterEqual(key);
 
-        return Collections.emptyIterator();
+        return new BPlusTreeIterator(this, iteratorNode, recordIterator);
     }
 
     /**
@@ -455,6 +459,7 @@ public class BPlusTree {
     // Iterator ////////////////////////////////////////////////////////////////
     private class BPlusTreeIterator implements Iterator<RecordId> {
         // TODO(proj2): Add whatever fields and constructors you want here.
+        BPlusTreeIterator(BPlusTree tree, LeafNode leafNode, Iterator<RecordId> recordIterator) {}    
 
         @Override
         public boolean hasNext() {
