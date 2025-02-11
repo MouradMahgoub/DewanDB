@@ -442,18 +442,36 @@ public class BPlusTree {
     private class BPlusTreeIterator implements Iterator<RecordId> {
         // TODO(proj2): Add whatever fields and constructors you want here.
 
+        LeafNode leafNode;
+        Iterator<RecordId> iterator;
+
+        public BPlusTreeIterator(LeafNode leafNode, Iterator<RecordId> iterator) {
+            this.leafNode = leafNode;
+            this.iterator = iterator;            
+        }
+
         @Override
         public boolean hasNext() {
             // TODO(proj2): implement
-
+            if (iterator.hasNext()) {
+                return true;
+            }
+            if (leafNode.getRightSibling().isPresent()) {
+                leafNode = leafNode.getRightSibling().get();
+                iterator = leafNode.scanAll();
+                return iterator.hasNext();
+            }
             return false;
         }
 
         @Override
         public RecordId next() {
             // TODO(proj2): implement
-
-            throw new NoSuchElementException();
+            if (hasNext()) {
+                return iterator.next();
+            } else {
+                throw new NoSuchElementException();
+            }
         }
     }
 }
